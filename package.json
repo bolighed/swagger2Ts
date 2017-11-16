@@ -1,0 +1,16 @@
+{
+  "name": "swaggertots",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Pachito Marco Calabrese <pm.calabrese@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "lodash": "^4.17.4",
+    "node-fetch": "^1.7.3"
+  }
+}
