@@ -1,30 +1,31 @@
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
-const CONFIG = require('./api.config');
 const fetch = require('node-fetch');
 
 let sub_interfaces = [];
 
-fetch(CONFIG.api_url).then((res) => {
-    return res.text();
-}).then((body) => {
-    fs.writeFile(CONFIG.swagger_file, body, (err) => {
-        if (err) throw err;
-        fs.readFile(path.join(__dirname, CONFIG.swagger_file), 'utf8', (err, data) => {
-            if (err) throw (err);
-            const parsed_file = JSON.parse(data);
-            for (var key in parsed_file.paths) {
-                const t = generateInterfaceByPath(parsed_file.paths[key], key);
-                const file_path = path.join(`${CONFIG.interfaces_dist_folder}${snakeTheName(key)}.ts`);
-                fs.writeFile(file_path, t, (err) => {
-                    if (err) throw (err);
-                    console.log(file_path + " generated!");
-                });
-            }
+function generateTS(CONFIG) {
+    fetch(CONFIG.api_url).then((res) => {
+        return res.text();
+    }).then((body) => {
+        fs.writeFile(CONFIG.swagger_file, body, (err) => {
+            if (err) throw err;
+            fs.readFile(path.join(__dirname, CONFIG.swagger_file), 'utf8', (err, data) => {
+                if (err) throw (err);
+                const parsed_file = JSON.parse(data);
+                for (var key in parsed_file.paths) {
+                    const t = generateInterfaceByPath(parsed_file.paths[key], key);
+                    const file_path = path.join(`${CONFIG.interfaces_dist_folder}${snakeTheName(key)}.ts`);
+                    fs.writeFile(file_path, t, (err) => {
+                        if (err) throw (err);
+                        console.log(file_path + " generated!");
+                    });
+                }
+            });
         });
     });
-});
+}
 
 function snakeTheName(key) {
     return `${key.replace('/', '').replace(/\//g, "_").replace(/{/g, "").replace(/}/g, "").replace(/-/g, "_").slice(0, -1)}`;
@@ -154,3 +155,5 @@ function generateObjectInterface(interface_name, object) {
     interface_text += '}\n';
     return interface_text;
 }
+
+module.exports = generateTS;
