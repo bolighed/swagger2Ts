@@ -11,7 +11,7 @@ Tool for generate TS definitions from Swagger
 
 index.js
 ```
-    const s2ts = require('../index.js');
+    const s2ts = require('swagger2ts');
     const path = require('path');
     const CONFIG = {
         api_url: 'http://localhost:18000/api/schema/1.0/?format=openapi',
