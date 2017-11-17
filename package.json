@@ -1,6 +1,6 @@
 {
   "name": "swagger2ts",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Tool for generate TS definitions from Swagger",
   "main": "index.js",
   "scripts": {
