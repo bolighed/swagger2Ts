@@ -4,6 +4,7 @@
   "description": "Tool for generate TS definitions from Swagger",
   "main": "index.js",
   "scripts": {
+    "build-interfaces": "node example/example",
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },

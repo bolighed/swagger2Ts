@@ -6,24 +6,37 @@ const fetch = require('node-fetch');
 let sub_interfaces = [];
 
 function generateTS(CONFIG) {
-    fetch(CONFIG.api_url).then((res) => {
-        return res.text();
-    }).then((body) => {
-        fs.writeFile(CONFIG.swagger_file, body, (err) => {
+    if (CONFIG.api_url && CONFIG.api_url !== '') {
+        fetch(CONFIG.api_url).then((res) => {
+            return res.text();
+        }, (err) => {
             if (err) throw err;
-            fs.readFile(path.join(__dirname, CONFIG.swagger_file), 'utf8', (err, data) => {
-                if (err) throw (err);
-                const parsed_file = JSON.parse(data);
-                for (var key in parsed_file.paths) {
-                    const t = generateInterfaceByPath(parsed_file.paths[key], key);
-                    const file_path = path.join(`${CONFIG.interfaces_dist_folder}${snakeTheName(key)}.ts`);
-                    fs.writeFile(file_path, t, (err) => {
-                        if (err) throw (err);
-                        console.log(file_path + " generated!");
-                    });
-                }
+        }).then((body) => {
+            fs.writeFile(CONFIG.swagger_file, body, (err) => {
+                if (err) throw err;
+                // save file locally
+                generatedTSFromFile(CONFIG)
             });
+        }).catch((err) => {
+            if (err) console.log(err.message || err);
         });
+    } else {
+        generatedTSFromFile(CONFIG)
+    }
+}
+
+function generatedTSFromFile(CONFIG) {
+    fs.readFile(CONFIG.swagger_file, 'utf8', (err, data) => {
+        if (err) throw (err);
+        const parsed_file = JSON.parse(data);
+        for (var key in parsed_file.paths) {
+            const t = generateInterfaceByPath(parsed_file.paths[key], key);
+            const file_path = path.join(`${CONFIG.interfaces_dist_folder}`, `${snakeTheName(key)}.ts`);
+            fs.writeFile(file_path, t, (err) => {
+                if (err) throw (err);
+                console.log(file_path + " generated!");
+            });
+        }
     });
 }
 
