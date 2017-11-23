@@ -1,8 +1,11 @@
 {
   "name": "swagger2ts",
-  "version": "1.0.3",
+  "version": "1.0.0",
   "description": "Tool for generate TS definitions from Swagger",
   "main": "index.js",
+  "repository": {
+    "url": "https://github.com/bolighed/swagger2Ts"
+  },
   "scripts": {
     "build-interfaces": "node example/example",
     "start": "node index.js",
