@@ -148,21 +148,20 @@ function generateSchema(schema, main_interface_name = '') {
     for (let key in schema.properties) {
         if (schema.properties.hasOwnProperty(key)) {
             const prop = schema.properties[key];
-            console.log("interface_text", interface_text)
             interface_text += prop.hasOwnProperty('description') && prop.description !== '' ? `  /** ${prop.description} */\n` : '';
             if (prop.name) {
                 interface_text += `  ${prop.name}`
             } else {
                 interface_text += `  ${key}`
             }
-            let t;
             if (prop.type === 'array' && prop.items) {
-                t = generateObjectInterface(main_interface_name + capitalizeFirstLetter(prop.name), prop.items);
+                const t = generateObjectInterface(main_interface_name + capitalizeFirstLetter(prop.name), prop.items);
+                sub_interfaces.push(t);
             }
             if (prop.type === 'object') {
-                t = generateObjectInterface(main_interface_name + capitalizeFirstLetter(key), prop);
+                const t = generateObjectInterface(main_interface_name + capitalizeFirstLetter(key), prop);
+                sub_interfaces.push(t);
             }
-            sub_interfaces.push(t);
             interface_text += prop.hasOwnProperty('required') ? (prop.required === true ? '' : '?') : '';
             interface_text += `: ${swaggerType2TSType(prop.type, main_interface_name + capitalizeFirstLetter(prop.name || key || ''))}\n`;
         }
