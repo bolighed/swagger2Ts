@@ -1,5 +1,5 @@
 {
-  "name": "swagger2ts",
+  "name": "bolighed-swagger2ts",
   "version": "1.0.0",
   "description": "Tool for generate TS definitions from Swagger",
   "main": "index.js",

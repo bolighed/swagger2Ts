@@ -64,6 +64,9 @@ function swaggerType2TSType(type, optional_type) {
         case 'array':
             return `Array<${optional_type || 'any'}>`;
             break;
+        case 'object':
+            return `${optional_type}`;
+            break;
         default:
             return type;
             break;
@@ -145,6 +148,7 @@ function generateSchema(schema, main_interface_name = '') {
     for (let key in schema.properties) {
         if (schema.properties.hasOwnProperty(key)) {
             const prop = schema.properties[key];
+            console.log("interface_text", interface_text)
             interface_text += prop.hasOwnProperty('description') && prop.description !== '' ? `  /** ${prop.description} */\n` : '';
             if (prop.name) {
                 interface_text += `  ${prop.name}`
@@ -153,10 +157,13 @@ function generateSchema(schema, main_interface_name = '') {
             }
             if (prop.type === 'array' && prop.items) {
                 const t = generateObjectInterface(main_interface_name + capitalizeFirstLetter(prop.name), prop.items);
-                sub_interfaces.push(t);
             }
+            if (prop.type === 'object') {
+                const t = generateObjectInterface(main_interface_name + capitalizeFirstLetter(key), prop);
+            }
+            sub_interfaces.push(t);
             interface_text += prop.hasOwnProperty('required') ? (prop.required === true ? '' : '?') : '';
-            interface_text += `: ${swaggerType2TSType(prop.type, main_interface_name + capitalizeFirstLetter(prop.name || ''))}\n`;
+            interface_text += `: ${swaggerType2TSType(prop.type, main_interface_name + capitalizeFirstLetter(prop.name || key || ''))}\n`;
         }
     }
     return interface_text;
