@@ -155,11 +155,12 @@ function generateSchema(schema, main_interface_name = '') {
             } else {
                 interface_text += `  ${key}`
             }
+            let t;
             if (prop.type === 'array' && prop.items) {
-                const t = generateObjectInterface(main_interface_name + capitalizeFirstLetter(prop.name), prop.items);
+                t = generateObjectInterface(main_interface_name + capitalizeFirstLetter(prop.name), prop.items);
             }
             if (prop.type === 'object') {
-                const t = generateObjectInterface(main_interface_name + capitalizeFirstLetter(key), prop);
+                t = generateObjectInterface(main_interface_name + capitalizeFirstLetter(key), prop);
             }
             sub_interfaces.push(t);
             interface_text += prop.hasOwnProperty('required') ? (prop.required === true ? '' : '?') : '';
