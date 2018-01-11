@@ -32,10 +32,14 @@ function generatedTSFromFile(CONFIG) {
         for (var key in parsed_file.paths) {
             const t = generateInterfaceByPath(parsed_file.paths[key], key);
             const file_path = path.join(`${CONFIG.interfaces_dist_folder}`, `${snakeTheName(key)}.ts`);
-            fs.writeFile(file_path, t, (err) => {
-                if (err) throw (err);
-                console.log(file_path + " generated!");
-            });
+            if (CONFIG.skip_files && CONFIG.skip_files.length > 1 && CONFIG.skip_files.indexOf(file_path) !== -1) {
+                console.log(`${file_path} skipped!`);
+            } else {
+                fs.writeFile(file_path, t, (err) => {
+                    if (err) throw (err);
+                    console.log(`${file_path} generated!`);
+                });
+            }
         }
     });
 }
