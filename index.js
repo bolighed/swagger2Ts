@@ -84,7 +84,7 @@ function generateInterfaceByPath(path_object, key) {
             var method = path_object[method_key];
             if (method) {
                 if (method_key === 'get') {
-                    full_interface += generateParametersInterfaceFromGetMethod(key, method_key, method);
+                    // full_interface += generateParametersInterfaceFromGetMethod(key, method_key, method);
                     full_interface += generateResponseInterfaceFromGetMethod(key, method_key, method);
                 } else if (method_key === 'post' || method_key === 'put') {
                     full_interface += generateParametersInterfaceFromPostMethod(key, method_key, method);
@@ -140,6 +140,9 @@ function generateResponseInterfaceFromGetMethod(key, method_key, method) {
         interface_text += generateSchema(method.responses["200"].schema, `${camelTheName(key)}${capitalizeFirstLetter(method_key)}Response`)
     }
     interface_text += '}\n';
+    if (method.parameters) {
+        interface_text += generateSchemaParams(method.parameters, `${camelTheName(key)}${capitalizeFirstLetter(method_key)}Parameters`)
+    }
     sub_interfaces.forEach((sub_interface) => {
         interface_text += sub_interface;
     });
@@ -166,6 +169,7 @@ function generateSchema(schema, main_interface_name = '') {
                 const t = generateObjectInterface(main_interface_name + capitalizeFirstLetter(key), prop);
                 sub_interfaces.push(t);
             }
+
             interface_text += prop.hasOwnProperty('required') ? (prop.required === true ? '' : '?') : '';
             interface_text += `: ${swaggerType2TSType(prop.type, main_interface_name + capitalizeFirstLetter(prop.name || key || ''))}\n`;
         }
@@ -180,4 +184,16 @@ function generateObjectInterface(interface_name, object) {
     return interface_text;
 }
 
+function generateSchemaParams(parameters, interface_name) {
+    let interface_text = `export interface ${interface_name} {\n`;
+    parameters.forEach((param) => {
+        interface_text += param.description ? `  /** ${param.description} */\n` : ''
+        interface_text += `  ${param.name}${param.required ? '' : '?'}: ${swaggerType2TSType(param.type)}\n`;
+    })
+    interface_text += '}\n'
+    // console.log('interface_text\n\n',interface_text);
+    return interface_text
+}
+
 module.exports = generateTS;
+
